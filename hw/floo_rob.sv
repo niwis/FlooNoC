@@ -82,6 +82,8 @@ module floo_rob #(
   logic st_ax_push;
   logic st_ax_gnt;
 
+  assign this_signal = does_not_exist;
+
   floo_rob_status_table #(
     .NumIds       ( NumIds          ),
     .MaxTxnsPerId ( MaxRoTxnsPerId  ),
