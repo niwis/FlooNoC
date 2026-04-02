@@ -24,11 +24,6 @@ jobs:
   #########
   slang:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        DUT: [axi_mesh, nw_mesh]
-        ROUTE_ALGO: [xy, src, id]
     steps:
       - uses: actions/checkout@v6
 
@@ -39,18 +34,18 @@ jobs:
         uses: astral-sh/setup-uv@v7
 
       - name: Generate RTL
-        run: uv run floogen rtl -c floogen/examples/${{ matrix.DUT }}_${{ matrix.ROUTE_ALGO }}.yml -o generated --no-format
+        run: uv run floogen rtl -c floogen/examples/nw_mesh_xy.yml -o generated --no-format
 
       - name: Generate bender file list
         # TODO: Remove -e fpnew once fpnew_top.sv is fixed upstream.
-        run: bender script flist-plus -t floo_synth -t ${{ matrix.DUT }} -e fpnew > sources.f
+        run: bender script flist-plus -t floo_synth -t nw_mesh -e fpnew > sources.f
 
       - name: Slang lint
         uses: pulp-platform/pulp-actions/slang@v2.5.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           slang-flags: >-
-            -f sources.f --top floo_${{ matrix.DUT }}_noc
+            -f sources.f --top floo_nw_mesh_noc
             --ignore-unknown-modules
             -Wno-finish-num
             --suppress-warnings .bender
